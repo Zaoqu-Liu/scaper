@@ -5,7 +5,5 @@
 ^pkgdown$
 ^\.github$
 ^comprehensive_test\.R$
-^IMPROVEMENTS\.md$
-^DEPLOYMENT_COMPLETE\.md$
 ^\.git$
 ^\.gitignore$
