@@ -6,8 +6,6 @@ output:
   rmarkdown::html_vignette:
     toc: true
     toc_depth: 3
-    fig_width: 7
-    fig_height: 5
 vignette: >
   %\VignetteIndexEntry{Introduction to scaper}
   %\VignetteEngine{knitr::rmarkdown}
@@ -18,8 +16,6 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.width = 7,
-  fig.height = 5,
   warning = FALSE,
   message = FALSE
 )
@@ -34,7 +30,6 @@ knitr::opts_chunk$set(
 - **Bidirectional Scoring**: Accounts for both up-regulated and down-regulated target genes
 - **Two Database Options**: CytoSig (41 cytokines) and Reactome (30 cytokines)
 - **Seurat Integration**: Seamless workflow with Seurat objects
-- **High Performance**: ~0.2 ms per cell per cytokine
 - **Scientific Accuracy**: Mathematically validated scoring algorithm
 
 ## Installation
@@ -47,35 +42,13 @@ install.packages("scaper", repos = "https://zaoqu-liu.r-universe.dev")
 remotes::install_github("Zaoqu-Liu/scaper")
 ```
 
-## Quick Start
-
-```{r quickstart, message=FALSE}
-library(scaper)
-library(Seurat)
-library(SeuratObject)
-
-# Load example data
-data(pbmc_small)
-
-# Compute cytokine activity scores for all cytokines
-# Note: normalize=TRUE will handle normalization automatically
-result <- scapeForSeurat(
-  seurat.object = pbmc_small,
-  database = "cytosig",
-  cytokine = "all",
-  normalize = TRUE
-)
-
-# Extract scores
-scores <- GetAssayData(result, assay = "scape", layer = "data")
-dim(scores)
-```
-
 ## Supported Cytokines
 
 ### CytoSig Database (n = 41)
 
 ```{r cytosig}
+library(scaper)
+
 cytosig_list <- supportedCytokines(database = "cytosig")
 cat("Total:", length(cytosig_list), "cytokines\n\n")
 print(cytosig_list)
@@ -89,36 +62,48 @@ cat("Total:", length(reactome_list), "cytokines\n\n")
 print(reactome_list)
 ```
 
-## Basic Usage Examples
+## Quick Start
 
-### Example 1: Targeted Cytokine Analysis
+The main functions in scaper are:
 
-```{r example1}
-# Focus on specific cytokines
-target_cytokines <- c("IL6", "IFNG", "IL4", "TNFA")
+1. **`scapeForSeurat()`**: For Seurat object input
+2. **`scape()`**: For expression matrix input
+3. **`genesetCytoSig()`**: Construct gene sets from CytoSig
+4. **`genesetReactome()`**: Construct gene sets from Reactome
 
-result_targeted <- scapeForSeurat(
+### Basic Usage with Seurat
+
+```{r seurat_example, eval=FALSE}
+library(scaper)
+library(Seurat)
+library(SeuratObject)
+
+# Load your Seurat object
+data(pbmc_small)
+
+# Compute cytokine activity scores for all cytokines
+result <- scapeForSeurat(
   seurat.object = pbmc_small,
   database = "cytosig",
-  cytokine = target_cytokines,
-  normalize = FALSE  # Already normalized
+  cytokine = "all",
+  normalize = TRUE
 )
 
-# Extract and examine scores
-scores_targeted <- as.data.frame(t(as.matrix(
-  GetAssayData(result_targeted, assay = "scape", layer = "data")
-)))
-
-head(scores_targeted)
+# Extract scores from scape assay
+scores <- GetAssayData(result, assay = "scape", slot = "data")
+dim(scores)  # cytokines x cells
 ```
 
-### Example 2: Matrix-Based Analysis
+### Basic Usage with Matrix
 
-```{r example2}
+```{r matrix_example, eval=FALSE}
+library(scaper)
+
 # Prepare normalized expression matrix (cells × genes)
-expression_data <- as.data.frame(t(as.matrix(
-  GetAssayData(pbmc_small, layer = "data")
-)))
+# expression_data should be a data.frame with:
+# - rows: cells
+# - columns: genes
+# - values: log-normalized expression
 
 # Compute cytokine activity scores
 activity_scores <- scape(
@@ -127,102 +112,43 @@ activity_scores <- scape(
   cytokine = c("IL6", "IL4", "IFNG")
 )
 
-# Result dimensions
+# Result: cells x cytokines matrix
 dim(activity_scores)
-head(activity_scores)
 ```
 
-## Basic Visualization
+## Gene Set Construction
 
-```{r visualization, fig.width=8, fig.height=6}
-library(pheatmap)
+### CytoSig Gene Set Example
 
-# Prepare data for visualization (sample 20 cytokines for clarity)
-set.seed(123)
-sample_cytokines <- sample(colnames(scores), min(20, ncol(scores)))
-plot_data <- t(scores[sample_cytokines, ])
+```{r geneset_cytosig}
+# Load IL6 gene set from CytoSig
+file_path <- system.file("extdata", "IL6_output.csv", package = "scaper")
+il6_genes <- genesetCytoSig(cytokine.eval = "IL6", file.name = file_path)
 
-# Create heatmap
-pheatmap(
-  plot_data,
-  fontsize_row = 6,
-  fontsize_col = 8,
-  cluster_rows = TRUE,
-  cluster_cols = TRUE,
-  main = "Cytokine Activity Heatmap (Sample)",
-  color = colorRampPalette(c("blue", "white", "red"))(100)
-)
+cat("IL6 gene set contains", nrow(il6_genes), "genes\n\n")
+head(il6_genes, 10)
 ```
 
-## Activity Score Distribution
+### Reactome Gene Set Example
 
-```{r distribution, fig.width=8, fig.height=5}
-# Examine IL6 activity distribution
-il6_scores <- scores["IL6", ]
+```{r geneset_reactome}
+# Load IL6 gene set from Reactome
+file_path <- system.file("extdata", "IL6_Interleukin6_signaling.xml", package = "scaper")
+il6_reactome <- genesetReactome(cytokine.eval = "IL6", file.name = file_path)
 
-par(mfrow = c(1, 2))
-hist(il6_scores, breaks = 20, col = "skyblue", 
-     main = "IL6 Activity Distribution",
-     xlab = "Activity Score", ylab = "Frequency")
-abline(v = median(il6_scores), col = "red", lwd = 2, lty = 2)
-
-boxplot(il6_scores, col = "lightgreen", 
-        main = "IL6 Activity Boxplot",
-        ylab = "Activity Score")
-```
-
-## Summary Statistics
-
-```{r stats}
-# Calculate summary statistics for selected cytokines
-selected <- c("IL6", "IFNG", "IL4", "TNFA")
-stats_df <- data.frame(
-  Cytokine = selected,
-  Min = sapply(selected, function(x) min(scores[x, ])),
-  Q1 = sapply(selected, function(x) quantile(scores[x, ], 0.25)),
-  Median = sapply(selected, function(x) median(scores[x, ])),
-  Mean = sapply(selected, function(x) mean(scores[x, ])),
-  Q3 = sapply(selected, function(x) quantile(scores[x, ], 0.75)),
-  Max = sapply(selected, function(x) max(scores[x, ])),
-  SD = sapply(selected, function(x) sd(scores[x, ]))
-)
-
-knitr::kable(stats_df, digits = 3, caption = "Summary Statistics of Cytokine Activity Scores")
+cat("IL6 pathway contains", nrow(il6_reactome), "genes\n\n")
+head(il6_reactome, 10)
 ```
 
 ## Score Interpretation
 
 **Activity Score Range**: [0, 1] (CDF values)
 
-- **High (> 0.7)**: Strong evidence of cytokine pathway activation
-- **Medium (0.3 - 0.7)**: Moderate or basal signaling activity
-- **Low (< 0.3)**: Minimal cytokine pathway activity
-
-## Comparison Between Methods
-
-```{r comparison}
-# Compare scape() and scapeForSeurat() results
-matrix_result <- scape(expression_data, database = "cytosig", cytokine = "IL6")
-seurat_result <- GetAssayData(
-  scapeForSeurat(pbmc_small, database = "cytosig", cytokine = "IL6", normalize = FALSE),
-  assay = "scape", layer = "data"
-)
-
-# Calculate correlation
-correlation <- cor(matrix_result[, "IL6"], as.numeric(seurat_result))
-
-cat(sprintf("Correlation between scape() and scapeForSeurat(): %.4f\n", correlation))
-cat("Both methods produce highly consistent results!\n")
-```
-
-## Next Steps
-
-This introduction covered the basics of **scaper**. For more advanced topics, see:
-
-- **Algorithm Details**: Mathematical formulation and scientific validation
-- **Visualization Tutorial**: Advanced plotting and integration with Seurat
-- **CytoSig Database**: Detailed usage of CytoSig-based scoring
-- **Reactome Database**: Pathway-based cytokine activity analysis
+| Score Range | Interpretation |
+|-------------|----------------|
+| > 0.7 | Strong evidence of cytokine pathway activation |
+| 0.3 - 0.7 | Moderate or basal signaling activity |
+| < 0.3 | Minimal cytokine pathway activity |
 
 ## Session Information
 
@@ -234,5 +160,4 @@ sessionInfo()
 
 **Author**: Zaoqu Liu  
 **Email**: liuzaoqu@163.com  
-**GitHub**: [Zaoqu-Liu/scaper](https://github.com/Zaoqu-Liu/scaper)  
-**R-universe**: [zaoqu-liu.r-universe.dev/scaper](https://zaoqu-liu.r-universe.dev/scaper)
+**GitHub**: [Zaoqu-Liu/scaper](https://github.com/Zaoqu-Liu/scaper)

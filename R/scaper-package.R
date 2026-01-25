@@ -14,9 +14,8 @@
 #' @importFrom SeuratObject GetAssayData
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_trim
+#' @importFrom stats pchisq pgamma var
 #' @importFrom utils read.csv
-#' @importFrom VAM vamForCollection
-#' @importFrom VAM vamForSeurat
 #' @importFrom xml2 read_xml
 #' @importFrom xml2 xml_find_all
 #' @importFrom xml2 xml_path

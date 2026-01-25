@@ -43,7 +43,11 @@ CytoSig.score.output <- scapeForSeurat(seurat.object = pbmc_small,
                                        database = "cytosig", cytokine = "all", normalize = TRUE)
 class(CytoSig.score.output)
 GetAssay(object = CytoSig.score.output, assay = "scape")
-cytosig_mat <- as.data.frame(t(as.matrix(GetAssayData(CytoSig.score.output, assay = "scape", layer = "data"))))
+# Extract scape assay (compatible with Seurat v4/v5)
+cytosig_mat <- as.data.frame(t(as.matrix(tryCatch(
+  GetAssayData(CytoSig.score.output, assay = "scape", layer = "data"),
+  error = function(e) GetAssayData(CytoSig.score.output, assay = "scape", slot = "data")
+))))
 pheatmap(cytosig_mat, fontsize_row = 4, fontsize_col = 7, 
          cluster_rows = FALSE, cluster_cols = FALSE)
 ```
@@ -54,7 +58,11 @@ pheatmap(cytosig_mat, fontsize_row = 4, fontsize_col = 7)
 
 Lastly, we perform gene set scoring using the `scape` function which accepts a m by n matrix as input (as compared to a Seurat object), with m samples and n genes.  
 ```{r message=FALSE, warning=FALSE, eval=FALSE}
-counts.matrix2 <- as.data.frame(t(as.matrix(GetAssayData(pbmc_small, layer = "data"))))
+# Extract expression data (compatible with Seurat v4/v5)
+counts.matrix2 <- as.data.frame(t(as.matrix(tryCatch(
+  GetAssayData(pbmc_small, layer = "data"),
+  error = function(e) GetAssayData(pbmc_small, slot = "data")
+))))
 CytoSig.score.output <- scape(counts.matrix = counts.matrix2, 
                               database = "cytosig", cytokine = "all")
 pheatmap(CytoSig.score.output, fontsize_row = 4, fontsize_col = 7, 

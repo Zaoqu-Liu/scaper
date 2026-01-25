@@ -24,8 +24,8 @@ A \eqn{m x p} matrix consisting of the cell-level cytokine activity scores for \
 \description{
 Computes cell-level estimates of cytokine activity for a normalized scRNA-seq 
 count matrix using the SCAPE method. SCAPE activity estimates are computed by scoring weighted genes 
-sets from the CytoSig or Reactome databases using the \code{\link[VAM:vamForCollection]{VAM::vamForCollection()}}
-function. Individual gene sets for subsequent scoring can be reconstructed using 
+sets from the CytoSig or Reactome databases using the Variance-adjusted Mahalanobis (VAM) method.
+Individual gene sets for subsequent scoring can be reconstructed using 
 the \code{\link[scaper]{genesetCytoSig}} and the \code{\link[scaper]{genesetReactome}} functions 
 for the CytoSig and the Reactome database, respectively.
 }

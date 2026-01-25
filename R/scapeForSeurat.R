@@ -2,10 +2,10 @@
 #' 
 #' Computes cell-level estimates of cytokine activity for a scRNA-seq Seurat
 #' count matrix using the scapeForSeurat method. SCAPE activity estimates are computed by scoring weighted gene 
-#' sets from the CytoSig or Reactome databases using the Variance-adjusted Mahalanobis (VAM) method 
-#' as implemented in the \code{\link[VAM:vamForSeurat]{VAM::vamForSeurat()}} function. Individual gene sets for subsequent scoring can be reconstructed using 
-#' the \code{\link[scaper]{genesetCytoSig}} and the \code{\link[scaper]{genesetReactome}} functions 
-#' for the CytoSig and the Reactome database, respectively. 
+#' sets from the CytoSig or Reactome databases using the Variance-adjusted Mahalanobis (VAM) method.
+#' This function is compatible with both Seurat v4 and v5. Individual gene sets for subsequent scoring 
+#' can be reconstructed using the \code{\link[scaper]{genesetCytoSig}} and the \code{\link[scaper]{genesetReactome}} 
+#' functions for the CytoSig and the Reactome database, respectively. 
 #' @seealso{\code{\link{genesetCytoSig}}, \code{\link{genesetReactome}}, \code{\link{scape}}}
 #' 
 #' @param seurat.object Seurat counts matrix. 
@@ -109,28 +109,20 @@ scapeForSeurat <- function(seurat.object, database="cytosig", cytokine="all", no
     }
     
     # Compute VAM scores for positively weighted genes
-    vam.out.positive <- vamForSeurat(seurat.data = seurat.object, 
-                                     gene.weights = list_weights_positive,
-                                     gene.set.collection = list_genes_positive)
+    vam.out.positive <- .vamForSeurat(seurat.data = seurat.object, 
+                                      gene.weights = list_weights_positive,
+                                      gene.set.collection = list_genes_positive)
     
     # Compute VAM scores for negatively weighted genes
-    vam.out.negative <- vamForSeurat(seurat.data = seurat.object, 
-                                     gene.weights = list_weights_negative,
-                                     gene.set.collection = list_genes_negative)
+    vam.out.negative <- .vamForSeurat(seurat.data = seurat.object, 
+                                      gene.weights = list_weights_negative,
+                                      gene.set.collection = list_genes_negative)
     
     # Integrate bidirectional gene set scores
     # Negatively weighted genes require complement transformation (1 - CDF)
     # to align directionality with biological interpretation
-    pos_data <- tryCatch({
-      GetAssayData(vam.out.positive, assay = "VAMcdf", layer = "data")
-    }, error = function(e) {
-      GetAssayData(vam.out.positive, assay = "VAMcdf", slot = "data")
-    })
-    neg_data <- tryCatch({
-      GetAssayData(vam.out.negative, assay = "VAMcdf", layer = "data")
-    }, error = function(e) {
-      GetAssayData(vam.out.negative, assay = "VAMcdf", slot = "data")
-    })
+    pos_data <- .getAssayDataCompat(vam.out.positive, assay = "VAMcdf")
+    neg_data <- .getAssayDataCompat(vam.out.negative, assay = "VAMcdf")
     scape.out <- (pos_data + (1 - neg_data))/2
     
     vam.out.positive[['VAMcdf']] <- NULL
@@ -181,15 +173,11 @@ scapeForSeurat <- function(seurat.object, database="cytosig", cytokine="all", no
     }
     
     # Compute VAM scores
-    vam.out <- vamForSeurat(seurat.data = seurat.object, 
-                            gene.set.collection = list_genes2)
+    vam.out <- .vamForSeurat(seurat.data = seurat.object, 
+                             gene.set.collection = list_genes2)
     
     # Update row names using compatible method
-    vam_data <- tryCatch({
-      GetAssayData(vam.out, assay = "VAMcdf", layer = "data")
-    }, error = function(e) {
-      GetAssayData(vam.out, assay = "VAMcdf", slot = "data")
-    })
+    vam_data <- .getAssayDataCompat(vam.out, assay = "VAMcdf")
     
     rownames(vam_data) <- gsub("-Genes", "", rownames(vam_data))
     

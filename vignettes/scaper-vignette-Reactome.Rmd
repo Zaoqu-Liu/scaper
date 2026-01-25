@@ -41,7 +41,11 @@ Next, we perform gene set scoring using the `scapeForSeurat` function, which acc
 Reactome.score.output <- scapeForSeurat(seurat.object = pbmc_small, 
                                        database = "reactome", 
                                        normalize = TRUE)
-reactome_mat <- as.data.frame(t(as.matrix(GetAssayData(Reactome.score.output, assay = "VAMcdf", layer = "data"))))
+# Extract scape assay (compatible with Seurat v4/v5)
+reactome_mat <- as.data.frame(t(as.matrix(tryCatch(
+  GetAssayData(Reactome.score.output, assay = "scape", layer = "data"),
+  error = function(e) GetAssayData(Reactome.score.output, assay = "scape", slot = "data")
+))))
 pheatmap(reactome_mat, fontsize_row = 4, fontsize_col = 7, 
          cluster_rows = FALSE, cluster_cols = FALSE)
 ```

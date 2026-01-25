@@ -2,8 +2,8 @@
 #' 
 #' Computes cell-level estimates of cytokine activity for a normalized scRNA-seq 
 #' count matrix using the SCAPE method. SCAPE activity estimates are computed by scoring weighted genes 
-#' sets from the CytoSig or Reactome databases using the \code{\link[VAM:vamForCollection]{VAM::vamForCollection()}}
-#' function. Individual gene sets for subsequent scoring can be reconstructed using 
+#' sets from the CytoSig or Reactome databases using the Variance-adjusted Mahalanobis (VAM) method.
+#' Individual gene sets for subsequent scoring can be reconstructed using 
 #' the \code{\link[scaper]{genesetCytoSig}} and the \code{\link[scaper]{genesetReactome}} functions 
 #' for the CytoSig and the Reactome database, respectively. 
 #' @seealso{\code{\link{genesetCytoSig}}, \code{\link{genesetReactome}}}
@@ -109,14 +109,14 @@ scape <- function(counts.matrix, database="cytosig", cytokine="all") {
     }
     
     # Compute VAM scores for positively weighted genes
-    vam.out.positive <- vamForCollection(gene.expr = counts.matrix, 
-                                         gene.weights = list_weights_positive,
-                                         gene.set.collection = list_genes_positive)
+    vam.out.positive <- .vamForCollection(gene.expr = counts.matrix, 
+                                          gene.weights = list_weights_positive,
+                                          gene.set.collection = list_genes_positive)
     
     # Compute VAM scores for negatively weighted genes
-    vam.out.negative <- vamForCollection(gene.expr = counts.matrix, 
-                                         gene.weights = list_weights_negative,
-                                         gene.set.collection = list_genes_negative)
+    vam.out.negative <- .vamForCollection(gene.expr = counts.matrix, 
+                                          gene.weights = list_weights_negative,
+                                          gene.set.collection = list_genes_negative)
     
     # Integrate bidirectional gene set scores
     # Negatively weighted genes require complement transformation (1 - CDF)
@@ -167,8 +167,8 @@ scape <- function(counts.matrix, database="cytosig", cytokine="all") {
     }
     
     # Compute VAM scores
-    vam.out <- vamForCollection(gene.expr = counts.matrix, 
-                                gene.set.collection = list_genes2)
+    vam.out <- .vamForCollection(gene.expr = counts.matrix, 
+                                 gene.set.collection = list_genes2)
     colnames(vam.out$cdf.value) <- gsub("-Genes", "", 
                                          colnames(vam.out$cdf.value))
     return(vam.out$cdf.value)

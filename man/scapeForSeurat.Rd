@@ -31,10 +31,10 @@ Seurat object consisting of cell-level cytokine activity scores returned as a se
 \description{
 Computes cell-level estimates of cytokine activity for a scRNA-seq Seurat
 count matrix using the scapeForSeurat method. SCAPE activity estimates are computed by scoring weighted gene 
-sets from the CytoSig or Reactome databases using the Variance-adjusted Mahalanobis (VAM) method 
-as implemented in the \code{\link[VAM:vamForSeurat]{VAM::vamForSeurat()}} function. Individual gene sets for subsequent scoring can be reconstructed using 
-the \code{\link[scaper]{genesetCytoSig}} and the \code{\link[scaper]{genesetReactome}} functions 
-for the CytoSig and the Reactome database, respectively.
+sets from the CytoSig or Reactome databases using the Variance-adjusted Mahalanobis (VAM) method.
+This function is compatible with both Seurat v4 and v5. Individual gene sets for subsequent scoring 
+can be reconstructed using the \code{\link[scaper]{genesetCytoSig}} and the \code{\link[scaper]{genesetReactome}} 
+functions for the CytoSig and the Reactome database, respectively.
 }
 \examples{
 \donttest{
