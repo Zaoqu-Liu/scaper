@@ -57,19 +57,13 @@ library(SeuratObject)
 # Load example data
 data(pbmc_small)
 
-# Normalize data (handle Seurat V4/V5 compatibility)
-tryCatch({
-  pbmc_small <- NormalizeData(pbmc_small, layer = "counts")
-}, error = function(e) {
-  pbmc_small <<- NormalizeData(pbmc_small)
-})
-
 # Compute cytokine activity scores for all cytokines
+# Note: normalize=TRUE will handle normalization automatically
 result <- scapeForSeurat(
   seurat.object = pbmc_small,
   database = "cytosig",
   cytokine = "all",
-  normalize = FALSE  # Already normalized
+  normalize = TRUE
 )
 
 # Extract scores

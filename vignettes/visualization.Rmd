@@ -43,14 +43,7 @@ library(RColorBrewer)
 # Load and prepare data
 data(pbmc_small)
 
-# Normalize data (handle Seurat V4/V5 compatibility)
-tryCatch({
-  pbmc_small <- NormalizeData(pbmc_small, layer = "counts")
-}, error = function(e) {
-  pbmc_small <- NormalizeData(pbmc_small)
-})
-
-# Compute cytokine activities
+# Compute cytokine activities (normalize=TRUE handles normalization)
 cytokine_result <- scapeForSeurat(
   seurat.object = pbmc_small,
   database = "cytosig",

@@ -163,20 +163,20 @@ library(SeuratObject)
 
 data(pbmc_small)
 
-# Normalize data (handle Seurat V4/V5 compatibility)
-tryCatch({
-  pbmc_small <- NormalizeData(pbmc_small, layer = "counts")
-}, error = function(e) {
-  pbmc_small <- NormalizeData(pbmc_small)
-})
-
-# Prepare expression matrix
+# Prepare expression matrix (use scapeForSeurat with normalize=TRUE)
 expr_matrix <- as.data.frame(t(as.matrix(
   GetAssayData(pbmc_small, layer = "data")
 )))
 
-# Compute IL6 activity
-il6_activity <- scape(expr_matrix, database = "cytosig", cytokine = "IL6")
+# Compute IL6 activity using scapeForSeurat
+il6_result <- scapeForSeurat(pbmc_small, database = "cytosig", 
+                             cytokine = "IL6", normalize = TRUE)
+il6_activity <- t(as.matrix(GetAssayData(il6_result, assay = "scape", layer = "data")))
+
+# Also prepare expression matrix for other examples
+expr_matrix <- as.data.frame(t(as.matrix(
+  GetAssayData(il6_result, layer = "data")
+)))
 ```
 
 ## Visualize Gene Set Composition
