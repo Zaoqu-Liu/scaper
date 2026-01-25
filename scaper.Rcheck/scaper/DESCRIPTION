@@ -1,0 +1,26 @@
+Package: scaper
+Title: Single Cell Transcriptomics-Level Cytokine Activity Prediction
+        and Estimation
+Version: 0.2.1
+Authors@R: c(
+    person("Zaoqu", "Liu", email = "liuzaoqu@163.com", role = c("aut", "cre")),
+    person("H. Robert", "Frost", email = "hildreth.r.frost@dartmouth.edu", role = c("aut")),
+    person("Azka", "Javaid", email = "azka.javaid.gr@dartmouth.edu", role = c("aut")))
+Maintainer: Zaoqu Liu <liuzaoqu@163.com>
+URL: https://github.com/Zaoqu-Liu/scaper
+BugReports: https://github.com/Zaoqu-Liu/scaper/issues
+Description: Generates cell-level cytokine activity estimates using relevant information from gene sets constructed with the 'CytoSig' and the 'Reactome' databases and scored using the modified 'Variance-adjusted Mahalanobis (VAM)' framework for single-cell RNA-sequencing (scRNA-seq) data. 'CytoSig' database is described in: Jiang at al., (2021) <doi:10.1038/s41592-021-01274-5>. 'Reactome' database is described in: Gillespie et al., (2021) <doi:10.1093/nar/gkab1028>. The 'VAM' method is outlined in: Frost (2020) <doi:10.1093/nar/gkaa582>.
+Suggests: knitr, pheatmap, rmarkdown, usethis
+Imports: magrittr, xml2, stringr, dplyr, Seurat, SeuratObject, VAM,
+        utils
+License: GPL (>= 2)
+Encoding: UTF-8
+RoxygenNote: 7.3.3
+VignetteBuilder: knitr
+Depends: R (>= 3.5.0)
+NeedsCompilation: no
+Packaged: 2026-01-25 06:05:02 UTC; liuzaoqu
+Author: Zaoqu Liu [aut, cre],
+  H. Robert Frost [aut],
+  Azka Javaid [aut]
+Built: R 4.4.0; ; 2026-01-25 06:05:36 UTC; unix

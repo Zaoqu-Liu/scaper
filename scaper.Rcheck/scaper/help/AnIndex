@@ -1,0 +1,8 @@
+scaper-package	scaper-package
+%>%	pipe
+genesetCytoSig	genesetCytoSig
+genesetReactome	genesetReactome
+scape	scape
+scapeForSeurat	scapeForSeurat
+scaper	scaper-package
+supportedCytokines	supportedCytokines
