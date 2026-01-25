@@ -1,0 +1,19 @@
+# R package build files
+*.Rcheck/
+*.tar.gz
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+
+# Build artifacts
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*~
+*.swp
+*.log
