@@ -1,0 +1,93 @@
+url: https://zaoqu-liu.github.io/scaper/
+template:
+  bootstrap: 5
+  bootswatch: flatly
+  theme: arrow-light
+  bslib:
+    primary: "#0054AD"
+    border-radius: 0.5rem
+    btn-border-radius: 0.25rem
+
+home:
+  title: "scaper: Single-Cell Cytokine Activity Prediction"
+  description: |
+    Quantify cytokine signaling activity at single-cell resolution using the SCAPE framework.
+    Integrates CytoSig and Reactome databases with VAM scoring methodology.
+
+authors:
+  Zaoqu Liu:
+    href: https://github.com/Zaoqu-Liu
+
+navbar:
+  structure:
+    left: [intro, reference, articles, tutorials, news]
+    right: [search, github]
+  components:
+    home:
+      icon: fas fa-home fa-lg
+      href: index.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    articles:
+      text: Articles
+      menu:
+      - text: Introduction
+        href: articles/introduction.html
+      - text: Algorithm Details
+        href: articles/algorithm-details.html
+      - text: Visualization Guide
+        href: articles/visualization.html
+      - text: ---
+      - text: "CytoSig Database"
+        href: articles/scaper-vignette-CytoSig.html
+      - text: "Reactome Database"
+        href: articles/scaper-vignette-Reactome.html
+    news:
+      text: News
+      href: news/index.html
+    github:
+      icon: fab fa-github fa-lg
+      href: https://github.com/Zaoqu-Liu/scaper
+
+reference:
+- title: "Primary Analysis Functions"
+  desc: "Main functions for cytokine activity scoring"
+  contents:
+  - scape
+  - scapeForSeurat
+  
+- title: "Gene Set Construction"
+  desc: "Functions to construct and examine gene sets"
+  contents:
+  - genesetCytoSig
+  - genesetReactome
+  - supportedCytokines
+  
+- title: "Package Documentation"
+  contents:
+  - scaper-package
+
+articles:
+- title: "Getting Started"
+  navbar: ~
+  contents:
+  - introduction
+  
+- title: "In-Depth Tutorials"
+  navbar: ~
+  contents:
+  - algorithm-details
+  - visualization
+  - scaper-vignette-CytoSig
+  - scaper-vignette-Reactome
+
+footer:
+  structure:
+    left: developed_by
+    right: built_with
+  components:
+    developed_by: |
+      Developed by [Zaoqu Liu](https://github.com/Zaoqu-Liu).
+    built_with: |
+      Built with [pkgdown](https://pkgdown.r-lib.org/) 2.0.7.

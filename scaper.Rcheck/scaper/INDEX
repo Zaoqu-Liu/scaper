@@ -1,7 +1,0 @@
-genesetCytoSig          CytoSig gene set construction.
-genesetReactome         Reactome gene set construction.
-scape                   Cytokine activity scores for a normalized
-                        matrix.
-scapeForSeurat          Cytokine activity scores for a Seurat matrix.
-supportedCytokines      Gene set to score for the CytoSig or the
-                        Reactome databases.

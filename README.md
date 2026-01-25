@@ -1,8 +1,11 @@
 # scaper: Single-Cell Transcriptomics-Level Cytokine Activity Prediction and Estimation
 
+📚 **Documentation**: https://zaoqu-liu.github.io/scaper/
+
 [![R-universe](https://zaoqu-liu.r-universe.dev/badges/scaper)](https://zaoqu-liu.r-universe.dev/scaper)
 [![R](https://img.shields.io/badge/R-%3E%3D3.5.0-blue.svg)](https://www.r-project.org/)
 [![License: GPL (>= 2)](https://img.shields.io/badge/License-GPL%20%28%3E%3D%202%29-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
+[![GitHub](https://img.shields.io/badge/GitHub-Zaoqu--Liu%2Fscaper-blue.svg)](https://github.com/Zaoqu-Liu/scaper)
 
 ## Abstract
 
