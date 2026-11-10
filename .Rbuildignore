@@ -4,6 +4,6 @@
 ^docs$
 ^pkgdown$
 ^\.github$
-^comprehensive_test\.R$
 ^\.git$
 ^\.gitignore$
+^MD5$

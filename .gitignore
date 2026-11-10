@@ -17,3 +17,6 @@ Thumbs.db
 *~
 *.swp
 *.log
+
+# CRAN mirror checksum file; stale once any file changes
+/MD5
